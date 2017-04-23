@@ -1,3 +1,17 @@
+### Terrain, continued
+
+> On the graphical side, it could be fun to try to sketch more interesting textures on the map, such as forests or fields. Or you could fill the oceans with sea monsters and lost ships. If you're really brave, you could even look at labelling more features, like mountain ranges and rivers.
+
+[Generating Fantasy Maps](https://mewo2.com/notes/terrain/)
+
+### Progress so far
+
+![progress](img/some-color.png)
+
+Below this line, the original README
+
+---
+
 # Fantasy map generator
 
 This is code for generating fantasy maps, using the algorithm behind [@unchartedatlas][uncharted]. For more details, see [these notes][notes].

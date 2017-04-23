@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>terrain</title>
+  <link rel="stylesheet" type="text/css" href="styles.css" />
+
+  <script type="text/javascript" src="vendor/d3.js"></script>
+  <script type="text/javascript" src="vendor/priority-queue.js"></script>
+  <script type="text/javascript" src="vendor/language.js"></script>
+  <script type="text/javascript" src="terrain.js"></script>
+</head>
+<body>
+  <svg id="map" width="500"></svg>
+
+  <script type="text/javascript">
+    var svg = d3.select(document.getElementById("map"))
+    doMap(svg, defaultParams)
+  </script>
+
+</body>
+</html>

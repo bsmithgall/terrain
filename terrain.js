@@ -334,7 +334,7 @@ function fillSinks(h, epsilon) {
 function getFlux(h) {
     var dh = downhill(h);
     var idxs = [];
-    var flux = zero(h.mesh); 
+    var flux = zero(h.mesh);
     for (var i = 0; i < h.length; i++) {
         idxs[i] = i;
         flux[i] = 1/h.length;
@@ -424,7 +424,7 @@ function cleanCoast(h, iters) {
                 if (h[nbs[j]] > 0) {
                     count++;
                 } else if (h[nbs[j]] > best) {
-                    best = h[nbs[j]];    
+                    best = h[nbs[j]];
                 }
             }
             if (count > 1) continue;
@@ -693,20 +693,23 @@ function makeD3Path(path) {
 function visualizeVoronoi(svg, field, lo, hi) {
     if (hi == undefined) hi = d3.max(field) + 1e-9;
     if (lo == undefined) lo = d3.min(field) - 1e-9;
-    var mappedvals = field.map(function (x) {return x > hi ? 1 : x < lo ? 0 : (x - lo) / (hi - lo)});
-    var tris = svg.selectAll('path.field').data(field.mesh.tris)
+    var mappedvals = field.map(function (x) { return x > hi ? 1 : x < lo ? 0 : (x - lo) / (hi - lo); });
+    var tris = svg.selectAll('path.field').data(field.mesh.tris);
+    var threeQuarters = d3.quantile(mappedvals, 0.75);
     tris.enter()
         .append('path')
         .classed('field', true);
-    
+
     tris.exit()
         .remove();
 
     svg.selectAll('path.field')
         .attr('d', makeD3Path)
-        .style('fill', function (d, i) {
-            return d3.interpolateViridis(mappedvals[i]);
-        });
+        .classed('sea', function(e, i) { return mappedvals[i] === 0; })
+        .classed('scrubland', function(e, i) { return mappedvals[i] > threeQuarters; })
+        // .style('fill', function (d, i) {
+            // return d3.interpolateViridis(mappedvals[i]);
+        // });
 }
 
 function visualizeDownhill(h) {
@@ -976,7 +979,7 @@ function drawLabels(svg, render) {
             if (terr[j] != city) score -= 3000;
             for (var k = 0; k < cities.length; k++) {
                 var u = h.mesh.vxs[cities[k]];
-                if (Math.abs(v[0] - u[0]) < sx && 
+                if (Math.abs(v[0] - u[0]) < sx &&
                     Math.abs(v[1] - sy/2 - u[1]) < sy) {
                     score -= k < nterrs ? 4000 : 500;
                 }
@@ -1007,10 +1010,10 @@ function drawLabels(svg, render) {
             }
         }
         reglabels.push({
-            text: text, 
-            x: h.mesh.vxs[best][0], 
-            y: h.mesh.vxs[best][1], 
-            size:sy, 
+            text: text,
+            x: h.mesh.vxs[best][0],
+            y: h.mesh.vxs[best][1],
+            size:sy,
             width:sx
         });
     }
@@ -1034,6 +1037,7 @@ function drawMap(svg, render) {
     render.coasts = contour(render.h, 0);
     render.terr = getTerritories(render);
     render.borders = getBorders(render);
+    visualizeVoronoi(svg, render.h, 0);
     drawPaths(svg, 'river', render.rivers);
     drawPaths(svg, 'coast', render.coasts);
     drawPaths(svg, 'border', render.borders);
@@ -1048,9 +1052,9 @@ function doMap(svg, params) {
     };
     var width = svg.attr('width');
     svg.attr('height', width * params.extent.height / params.extent.width);
-    svg.attr('viewBox', -1000 * params.extent.width/2 + ' ' + 
-                        -1000 * params.extent.height/2 + ' ' + 
-                        1000 * params.extent.width + ' ' + 
+    svg.attr('viewBox', -1000 * params.extent.width/2 + ' ' +
+                        -1000 * params.extent.height/2 + ' ' +
+                        1000 * params.extent.width + ' ' +
                         1000 * params.extent.height);
     svg.selectAll().remove();
     render.h = params.generator(params);
@@ -1062,6 +1066,7 @@ var defaultParams = {
     extent: defaultExtent,
     generator: generateCoast,
     npts: 16384,
+    // npts: 2 ** 6,
     ncities: 15,
     nterrs: 5,
     fontsizes: {
